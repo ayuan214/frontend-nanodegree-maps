@@ -3,14 +3,16 @@
 	<head>
 		<title> Google Maps with Ajax and KO </title>
 		<link href="css/style.css" rel="stylesheet" type="text/css">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
 		<script src="js/lib/knockout-3.3.0.js"></script>
+		<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBBUew0pDlFKaJ7x7j_EH95dzk-bNcLh68"></script> 
     	
 	</head>
 
 	<body>
 		
-	<div class="map" data-bind="googlemap: { locations: locations, centerLat: 41.48, centerLon: -81.67 }"></div>
+	<div id ='map_container'></div>
 
-		<script src="js/app.js"></script>
+		<script type = "text/javascript" src="js/app.js"></script>
 	</body>
 </html>
