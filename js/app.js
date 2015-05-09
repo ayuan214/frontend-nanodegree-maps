@@ -166,8 +166,4 @@ function yelpAPI (map, markers, title, bizID, infowindows) {
     });
 }
 
-function updateInfo(num, img_url){
-
-}
-
 ko.applyBindings(ViewModel());
