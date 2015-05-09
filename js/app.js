@@ -53,7 +53,6 @@ var Model = [
 var ViewModel = function() {
 
     var map = initializeMap();
-    //var yelp_stars = yelpApi(Model);
     var markers =initializeMarkers(Model, map);
 };
 
@@ -148,15 +147,22 @@ function yelpAPI (map, markers, title, bizID, infowindows) {
         'cache' : true, 
         'dataType' : 'jsonp',
         'jsonpCallback' : 'cb',
-        'success' : function(data, textStats, XMLHttpRequest) {
+        success : function(data, textStats, XMLHttpRequest) {
             console.log(data);
             console.log(data.rating_img_url);
             //console.log(data_yelp);
             var content;
-            content = '<div id = content><h3>' + title + '</h3>' + '<img class = \'yelp_image\' src =' + data.rating_img_url + ' alt = \'Yelp Review\'></div>' ;
+            content = '<div id = \'content\'><h3>' + title + '</h3>' + '<img class = \'yelp_image\' src =' + data.rating_img_url + ' alt = \'Yelp Review\'></div>' ;
+            infowindows.setContent(content); //fills content with whatever is clicked
+            infowindows.open(map, markers);  
+        },
+        error : function() {
+            var content;
+            content = '<div id = \'content\'><h3>' + title + '</h3>' + '<p>Yelp Review unavailable</p></div>' ;
             infowindows.setContent(content); //fills content with whatever is clicked
             infowindows.open(map, markers);  
         }
+
     });
 }
 
