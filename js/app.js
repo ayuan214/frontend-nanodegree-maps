@@ -53,12 +53,23 @@ var Model = [
 var ViewModel = function() {
     var self = this;
     self.filter = ko.observable("");
+    self.placesList = ko.observableArray([]);
+
+    // Fills placeList array with observables 
+    Model.forEach(function(placeItem){
+        self.placesList.push( new Places(placeItem) );
+    });
 
     var map = initializeMap();
     var markers =initializeMarkers(Model, map);
 };
 
 // ******************************** End of View Model ******************************
+function Places(Model) {
+    this.title = ko.observable(Model.title);
+    this.LatLng = ko.observableArray(Model.gLatLng);
+    this.bizID = ko.observable(Model.bizID);
+}
 
 function initializeMap(){
     var mapOptions = {
@@ -66,7 +77,7 @@ function initializeMap(){
         center: new google.maps.LatLng(37.778790, -122.389259)
     };
     return new google.maps.Map(document.getElementById("map_container"), mapOptions);
-} 
+}
 
   // create function for markers
 function initializeMarkers(data, map_view) {

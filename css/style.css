@@ -16,10 +16,38 @@ body, html {
 
 .search_form {
 	font-size: 18px;
-	top: 35px;
+	top: 10px;
 	left: 75px;
 	float: left;
 	position: fixed;
 	margin: 2px 10px 0;
-	min-width: 171px;
+	min-width: 150px;
+	border-radius: 4px;
+}
+
+.placesList {
+	display: block;
+	position: fixed;
+	top: 50px;
+	z-index: 1000;
+	float: left;
+	left: 75px;
+	min-width: 180px;
+	overflow: auto;
+	padding: 5px 5px 0px 5px;
+	margin: 2px 10px 0px;
+	font-size: 18px;
+	text-align: left;
+	list-style: none;
+	background-color: #ffffff;
+	-webkit-background-clip: padding-box;
+	background-clip: padding-box;
+	border: 1px solid black;
+	border-radius: 4px;
+	-webkit-box-shadow: 0 6px 12px rgba(0,0,0,.175);
+	box-shadow: 0 6px 12px rgba(0,0,0,.175);	
+}
+
+li:hover {
+	background-color: #A1A1A1;
 }
