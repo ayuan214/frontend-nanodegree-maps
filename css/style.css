@@ -13,3 +13,13 @@ body, html {
 	margin-right: auto;
 	margin-left: auto; 
 }
+
+.search_form {
+	font-size: 18px;
+	top: 35px;
+	left: 75px;
+	float: left;
+	position: fixed;
+	margin: 2px 10px 0;
+	min-width: 171px;
+}

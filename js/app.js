@@ -51,6 +51,8 @@ var Model = [
 ];
 // *********************************** View Model *********************************
 var ViewModel = function() {
+    var self = this;
+    self.filter = ko.observable("");
 
     var map = initializeMap();
     var markers =initializeMarkers(Model, map);
