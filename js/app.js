@@ -71,6 +71,7 @@ function initializeMap(){
 function initializeMarkers(data, map_view) {
     var markers = [];
     var infowindows;
+    var bounds = new google.maps.LatLngBounds();
     //var yelpData = [];
     //var data_yelp; 
     for (var i =0; i<data.length; i++) {
@@ -87,6 +88,7 @@ function initializeMarkers(data, map_view) {
             map: map_view,
             title: name 
         }); 
+        bounds.extend(marker_latlng);
 
         // need to use closures to make it so that it doesn't always reference last clicked index
         google.maps.event.addListener(markers[i], 'click', function(j) {
@@ -100,6 +102,7 @@ function initializeMarkers(data, map_view) {
             }
         }(i));
     }
+    map_view.fitBounds(bounds);
     return markers, infowindows;
     //console.log(yelpData);
 } 
