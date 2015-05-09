@@ -53,23 +53,26 @@ var Model = [
 var ViewModel = function() {
 
     var map = initializeMap();
+    //var yelp_stars = yelpApi(Model);
     var markers =initializeMarkers(Model, map);
 };
 
 // ******************************** End of View Model ******************************
 
 function initializeMap(){
-        var mapOptions = {
-            zoom: 14,
-            center: new google.maps.LatLng(37.778790, -122.389259)
-        };
-        return new google.maps.Map(document.getElementById("map_container"), mapOptions);
+    var mapOptions = {
+        zoom: 14,
+        center: new google.maps.LatLng(37.778790, -122.389259)
+    };
+    return new google.maps.Map(document.getElementById("map_container"), mapOptions);
 } 
 
   // create function for markers
 function initializeMarkers(data, map_view) {
     var markers = [];
     var infowindows;
+    //var yelpData = [];
+    //var data_yelp; 
     for (var i =0; i<data.length; i++) {
         var name = data[i].title;
         var lat = data[i].gLatLng[0];
@@ -88,12 +91,74 @@ function initializeMarkers(data, map_view) {
         // need to use closures to make it so that it doesn't always reference last clicked index
         google.maps.event.addListener(markers[i], 'click', function(j) {
             return function() {
-                infowindows.setContent(data[j].title); //fills content with whatever is clicked
-                infowindows.open(map_view, markers[j]);  
+                //var content;
+                //var data_yelp = yelpData[j];
+                yelpAPI(map_view, markers[j], data[j].title, Model[j].bizID, infowindows);
+                //content= '<div id = content><h3>' + data[j].title + '</h3>' + '<img class = \'yelp_image\' src =' + yelpData[j] + ' alt = \'Yelp Review\'></div>' ;
+                //infowindows.setContent(content); //fills content with whatever is clicked
+                //infowindows.open(map_view, markers[j]);  
             }
         }(i));
     }
-    return markers, infowindows; 
+    return markers, infowindows;
+    //console.log(yelpData);
 } 
+
+function yelpAPI (map, markers, title, bizID, infowindows) {
+    var auth = {
+        consumerKey : "gRRJAGvD01BXyeZkXt9kUw",
+        consumerSecret : "RqcoTBNLQaRAbV1bPtFqS_vdWA8",
+        accessToken : "JbLZZ9MPRsM7tlv6WXwVex6KfU1t9p8z",
+        accessTokenSecret : "8fasPNOG1EXM8dNQQx5n96VHVqk",
+        serviceProvider : {
+            signatureMethod : "HMAC-SHA1"
+        }
+    };
+
+    var business = bizID;
+    var accessor = {
+        consumerSecret : auth.consumerSecret,
+        tokenSecret : auth.accessTokenSecret
+    };
+    parameters = [];
+    parameters.push(['callback', 'cb']);
+    parameters.push(['oauth_consumer_key', auth.consumerKey]);
+    parameters.push(['oauth_consumer_secret', auth.consumerSecret]);
+    parameters.push(['oauth_token', auth.accessToken]);
+    parameters.push(['oauth_signature_method', 'HMAC-SHA1']);
+
+    var message = {
+        'action' : 'http://api.yelp.com/v2/business/' + business,
+        'method' : 'GET',
+        'parameters' : parameters
+    };
+
+    OAuth.setTimestampAndNonce(message);
+    OAuth.SignatureMethod.sign(message, accessor);
+
+    var parameterMap = OAuth.getParameterMap(message.parameters);
+    console.log(parameterMap);
+
+    $.ajax({
+        'url' : message.action,
+        'data' : parameterMap,
+        'cache' : true, 
+        'dataType' : 'jsonp',
+        'jsonpCallback' : 'cb',
+        'success' : function(data, textStats, XMLHttpRequest) {
+            console.log(data);
+            console.log(data.rating_img_url);
+            //console.log(data_yelp);
+            var content;
+            content = '<div id = content><h3>' + title + '</h3>' + '<img class = \'yelp_image\' src =' + data.rating_img_url + ' alt = \'Yelp Review\'></div>' ;
+            infowindows.setContent(content); //fills content with whatever is clicked
+            infowindows.open(map, markers);  
+        }
+    });
+}
+
+function updateInfo(num, img_url){
+
+}
 
 ko.applyBindings(ViewModel());
