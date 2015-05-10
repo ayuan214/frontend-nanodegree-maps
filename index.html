@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 	<head>
+		<meta charset="utf-8">
 		<title> Google Maps with Ajax and KO </title>
 		<link href="css/style.css" rel="stylesheet" type="text/css">
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
@@ -13,9 +14,9 @@
 
 	<body>
 		<div id ='map_container'></div>
-		<div id = "filter">
-			<input class = 'search_form' type ='text' placeholder = 'Filter Location' data-bind: 'textInput: filter' />
-			<ul class = 'placesList' data-bind = 'foreach: placesList'>
+		<div id = "placenames">
+			<input class = 'search_form'  type = 'text' placeholder = 'Filter Location' data-bind: "textInput: filter" />
+			<ul class = 'placesList' data-bind = 'foreach: filteredItems'>
 				<li data-bind = 'text: title'></li>
 			</ul>
 		</div>

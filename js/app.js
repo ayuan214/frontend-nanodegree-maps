@@ -62,6 +62,12 @@ var ViewModel = function() {
 
     var map = initializeMap();
     var markers =initializeMarkers(Model, map);
+
+    self.filteredItems = ko.computed(function() {
+        return ko.utils.arrayFilter(self.placesList(), function(item){
+            return item.title.toLowerCase().indexOf(self.filter().toLowerCase()) !== -1;
+        })
+    }, self);
 };
 
 // ******************************** End of View Model ******************************
@@ -179,4 +185,5 @@ function yelpAPI (map, markers, title, bizID, infowindows) {
     });
 }
 
+// Initalize Function
 ko.applyBindings(ViewModel());
