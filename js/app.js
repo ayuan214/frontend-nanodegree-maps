@@ -63,8 +63,10 @@ var ViewModel = function() {
     var map = initializeMap();
     var markers =initializeMarkers(Model, map);
 
-    self.filteredItems = ko.computed(function() {
+   self.filteredItems = ko.computed(function() {
         return ko.utils.arrayFilter(self.placesList(), function(item){
+            console.log(item.title.toLowerCase());
+            console.log(self.filter().toLowerCase());
             return item.title.toLowerCase().indexOf(self.filter().toLowerCase()) !== -1;
         })
     }, self);
@@ -72,9 +74,9 @@ var ViewModel = function() {
 
 // ******************************** End of View Model ******************************
 function Places(Model) {
-    this.title = ko.observable(Model.title);
-    this.LatLng = ko.observableArray(Model.gLatLng);
-    this.bizID = ko.observable(Model.bizID);
+    this.title = Model.title;
+    this.LatLng = Model.gLatLng;
+    this.bizID = Model.bizID;
 }
 
 function initializeMap(){

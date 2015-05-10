@@ -15,7 +15,8 @@
 	<body>
 		<div id ='map_container'></div>
 		<div id = "placenames">
-			<input class = 'search_form'  type = 'text' placeholder = 'Filter Location' data-bind: "textInput: filter" />
+<!--			<input class = 'search-form'  type = 'text' placeholder = 'Filter Location' data-bind: "textInput: filter" />-->
+			<input class="search_form" type="text" placeholder="Filter Location" data-bind='textInput: filter' />
 			<ul class = 'placesList' data-bind = 'foreach: filteredItems'>
 				<li data-bind = 'text: title'></li>
 			</ul>
