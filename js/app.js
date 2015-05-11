@@ -56,17 +56,25 @@ var ViewModel = function() {
     self.placesList = ko.observableArray([]);
 
     // Fills placeList array with observables 
+
+    var map = initializeMap();
+    initializeMarkers(Model, map);
+
     Model.forEach(function(placeItem){
         self.placesList.push( new Places(placeItem) );
     });
 
-    var map = initializeMap();
-    var markers =initializeMarkers(Model, map);
-
    self.filteredItems = ko.computed(function() {
         return ko.utils.arrayFilter(self.placesList(), function(item){
-            console.log(item.title.toLowerCase());
-            console.log(self.filter().toLowerCase());
+            if (item.title.toLowerCase().indexOf(self.filter().toLowerCase()) !== -1){
+                item.marker.setMap(map);
+            }
+            else {
+                item.marker.setMap(null);
+            }
+            //console.log(item);
+            //console.log(item.title.toLowerCase());
+            //console.log(self.filter().toLowerCase());
             return item.title.toLowerCase().indexOf(self.filter().toLowerCase()) !== -1;
         })
     }, self);
@@ -77,11 +85,12 @@ function Places(Model) {
     this.title = Model.title;
     this.LatLng = Model.gLatLng;
     this.bizID = Model.bizID;
+    this.marker = Model.marker;
 }
 
 function initializeMap(){
     var mapOptions = {
-        zoom: 14,
+        zoom: 12,
         center: new google.maps.LatLng(37.778790, -122.389259)
     };
     return new google.maps.Map(document.getElementById("map_container"), mapOptions);
@@ -105,9 +114,10 @@ function initializeMarkers(data, map_view) {
 
         markers[i] = new google.maps.Marker({
             position: marker_latlng,
-            map: map_view,
+            //map: map_view,
             title: name 
         }); 
+        data[i].marker = markers[i];
         bounds.extend(marker_latlng);
 
         // need to use closures to make it so that it doesn't always reference last clicked index
@@ -123,7 +133,7 @@ function initializeMarkers(data, map_view) {
         }(i));
     }
     map_view.fitBounds(bounds);
-    return markers, infowindows;
+    return data, markers, infowindows;
     //console.log(yelpData);
 } 
 
