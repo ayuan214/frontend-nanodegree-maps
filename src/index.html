@@ -21,11 +21,9 @@
 			<div class = "row">
 				<div class = "col-md-2"></div>
 				<div class = "col-md-10" id = "placenames">
-					<input class="search_form" type="text" placeholder="Filter Location" data-bind='textInput: filter' />
-<!--				</div>
-				<div class = "col-md-2">  -->
-					<ul class = 'placesList' data-bind = 'foreach: filteredItems'>
-						<li data-bind = 'text: title'></li>
+					<input class="search_form" type="text" placeholder="Filter Location" data-bind="textInput: filter" />
+					<ul data-bind = "foreach: filteredItems" class = "list-group placesList" >
+						<li data-bind="click: $parent.clickList, text: title" class = "list-group-item" ></li>
 					</ul>
 				</div>
 			</div>

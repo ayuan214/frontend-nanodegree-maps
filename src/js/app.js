@@ -1,21 +1,12 @@
 // API to use are Google and Yelp
 
-/* *********************************** Model **************************************
-List of places:
-1. AT&T Park 
-2. Ghirardelli Square
-3. Oracle Arena
-4. Cliff House
-5. Koit Tower
-6. Orpheum Theater
-7. Ike's Place
-*/
+/* *********************************** Model ***************************************/
 
 var Model = [
     {
-        title: 'AT&T Park',
-        gLatLng: [37.778582, -122.389270],
-        bizID: 'at-and-t-park-san-francisco'
+        title: 'AT&T Park', // name of place
+        gLatLng: [37.778582, -122.389270], //latlng of place for gmaps
+        bizID: 'at-and-t-park-san-francisco' // bizID to do yelp search
     },
     {
         title: 'Ghirardelli Square',
@@ -52,32 +43,35 @@ var Model = [
 // *********************************** View Model *********************************
 var ViewModel = function() {
     var self = this;
-    self.filter = ko.observable("");
-    self.placesList = ko.observableArray([]);
+    self.filter = ko.observable(""); // create filter variable for textField to filter
+    self.placesList = ko.observableArray([]); // create placeList observable 
 
-    // Fills placeList array with observables 
+    var map = initializeMap(); //create map on screen
+    infowindows = new google.maps.InfoWindow(); // create infowindows for gmaps
+    self.map = ko.observable(map); //make map observable
+    self.infowindows = ko.observable(infowindows); // make infowindows ko.observable
+    initializeMarkers(Model, map, infowindows); //create all markers on the map
 
-    var map = initializeMap();
-    initializeMarkers(Model, map);
-
-    Model.forEach(function(placeItem){
-        self.placesList.push( new Places(placeItem) );
+    Model.forEach(function(placeItem){ 
+        self.placesList.push( new Places(placeItem) );// fill placesList with Model data;
     });
 
-   self.filteredItems = ko.computed(function() {
-        return ko.utils.arrayFilter(self.placesList(), function(item){
-            if (item.title.toLowerCase().indexOf(self.filter().toLowerCase()) !== -1){
-                item.marker.setMap(map);
+    self.filteredItems = ko.computed(function() {
+        return ko.utils.arrayFilter(self.placesList(), function(places){
+            if (places.title.toLowerCase().indexOf(self.filter().toLowerCase()) !== -1){
+                places.marker.setMap(map); //if there are matches make map on screen
             }
             else {
-                item.marker.setMap(null);
+                places.marker.setMap(null); //otherwise if no index map found set marker map to null
             }
-            //console.log(item);
-            //console.log(item.title.toLowerCase());
-            //console.log(self.filter().toLowerCase());
-            return item.title.toLowerCase().indexOf(self.filter().toLowerCase()) !== -1;
+            return places.title.toLowerCase().indexOf(self.filter().toLowerCase()) !== -1; //filters the array
         })
     }, self);
+
+   self.clickList = function(data) {
+        //runs yelp function that will open info window
+    yelpAPI(self.map(), data.marker, data.title, data.bizID, self.infowindows());
+   }
 };
 
 // ******************************** End of View Model ******************************
@@ -91,50 +85,37 @@ function Places(Model) {
 function initializeMap(){
     var mapOptions = {
         zoom: 12,
-        center: new google.maps.LatLng(37.778790, -122.389259)
+        center: new google.maps.LatLng(37.778790, -122.389259) // random center location chosen
     };
     return new google.maps.Map(document.getElementById("map_container"), mapOptions);
 }
 
   // create function for markers
-function initializeMarkers(data, map_view) {
+function initializeMarkers(data, map_view, infowindows) {
     var markers = [];
-    var infowindows;
     var bounds = new google.maps.LatLngBounds();
-    //var yelpData = [];
-    //var data_yelp; 
     for (var i =0; i<data.length; i++) {
         var name = data[i].title;
         var lat = data[i].gLatLng[0];
         var lng = data[i].gLatLng[1];
         var marker_latlng = new google.maps.LatLng(lat, lng); 
 
-        // create empty infowindow
-        infowindows = new google.maps.InfoWindow();
-
         markers[i] = new google.maps.Marker({
             position: marker_latlng,
-            //map: map_view,
             title: name 
         }); 
         data[i].marker = markers[i];
         bounds.extend(marker_latlng);
 
         // need to use closures to make it so that it doesn't always reference last clicked index
-        google.maps.event.addListener(markers[i], 'click', function(j) {
+        google.maps.event.addListener(data[i].marker, 'click', function(j) {
             return function() {
-                //var content;
-                //var data_yelp = yelpData[j];
-                yelpAPI(map_view, markers[j], data[j].title, Model[j].bizID, infowindows);
-                //content= '<div id = content><h3>' + data[j].title + '</h3>' + '<img class = \'yelp_image\' src =' + yelpData[j] + ' alt = \'Yelp Review\'></div>' ;
-                //infowindows.setContent(content); //fills content with whatever is clicked
-                //infowindows.open(map_view, markers[j]);  
+                yelpAPI(map_view, data[j].marker, data[j].title, Model[j].bizID, infowindows); 
             }
         }(i));
     }
     map_view.fitBounds(bounds);
     return data, markers, infowindows;
-    //console.log(yelpData);
 } 
 
 function yelpAPI (map, markers, title, bizID, infowindows) {
@@ -175,13 +156,12 @@ function yelpAPI (map, markers, title, bizID, infowindows) {
     $.ajax({
         'url' : message.action,
         'data' : parameterMap,
-        'cache' : true, 
+        'cache' : true, //this has to be included after jquery1.6
         'dataType' : 'jsonp',
         'jsonpCallback' : 'cb',
         success : function(data, textStats, XMLHttpRequest) {
             console.log(data);
             console.log(data.rating_img_url);
-            //console.log(data_yelp);
             var content;
             content = '<div id = \'content\'><h3>' + title + '</h3>' + '<img class = \'yelp_image\' src =' + data.rating_img_url + ' alt = \'Yelp Review\'></div>' ;
             infowindows.setContent(content); //fills content with whatever is clicked
@@ -198,4 +178,4 @@ function yelpAPI (map, markers, title, bizID, infowindows) {
 }
 
 // Initalize Function
-ko.applyBindings(ViewModel());
+ko.applyBindings(new ViewModel());
