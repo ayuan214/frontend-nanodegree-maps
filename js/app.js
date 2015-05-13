@@ -65,13 +65,13 @@ var ViewModel = function() {
                 places.marker.setMap(null); //otherwise if no index map found set marker map to null
             }
             return places.title.toLowerCase().indexOf(self.filter().toLowerCase()) !== -1; //filters the array
-        })
+        });
     }, self);
 
    self.clickList = function(data) {
         //runs yelp function that will open info window
     yelpAPI(self.map(), data.marker, data.title, data.bizID, self.infowindows());
-   }
+   };
 };
 
 // ******************************** End of View Model ******************************
@@ -111,7 +111,7 @@ function initializeMarkers(data, map_view, infowindows) {
         google.maps.event.addListener(data[i].marker, 'click', function(j) {
             return function() {
                 yelpAPI(map_view, data[j].marker, data[j].title, Model[j].bizID, infowindows); 
-            }
+            };
         }(i));
     }
     map_view.fitBounds(bounds);
